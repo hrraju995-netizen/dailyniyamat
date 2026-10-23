@@ -112,8 +112,18 @@ cp -r public/js "$PUBLIC_HTML/" 2>/dev/null || true
 cp public/favicon.ico "$PUBLIC_HTML/" 2>/dev/null || true
 cp public/robots.txt "$PUBLIC_HTML/" 2>/dev/null || true
 
-# Copy .htaccess
-cp public/.htaccess "$PUBLIC_HTML/.htaccess"
+# Setup .htaccess with ea-php82 handler
+cat << 'HTEOF' > "$PUBLIC_HTML/.htaccess"
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php82” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
+  AddHandler application/x-httpd-ea-php82___lsphp .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
+
+HTEOF
+cat public/.htaccess >> "$PUBLIC_HTML/.htaccess"
 
 # Create bridge index.php in public_html
 cat << 'INDEXEOF' > "$PUBLIC_HTML/index.php"
