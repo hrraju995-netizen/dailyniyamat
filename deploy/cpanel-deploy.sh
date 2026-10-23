@@ -78,16 +78,20 @@ chmod -R 775 storage bootstrap/cache
 
 # 5. Composer Install
 echo "Installing Composer dependencies..."
+if [ ! -f "composer.phar" ]; then
+    echo "Downloading composer.phar..."
+    curl -sS -L https://getcomposer.org/download/latest-stable/composer.phar -o composer.phar || wget -q https://getcomposer.org/download/latest-stable/composer.phar -O composer.phar || true
+fi
+
 if [ -f "composer.phar" ]; then
+    echo "Running composer.phar..."
     $PHP_BIN -d memory_limit=-1 composer.phar install --no-dev --optimize-autoloader --no-interaction
 elif command -v composer &> /dev/null; then
+    echo "Running system composer..."
     $PHP_BIN -d memory_limit=-1 $(which composer) install --no-dev --optimize-autoloader --no-interaction
 else
-    echo "Downloading composer.phar..."
-    $PHP_BIN -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    $PHP_BIN composer-setup.php --quiet
-    $PHP_BIN -r "unlink('composer-setup.php');"
-    $PHP_BIN -d memory_limit=-1 composer.phar install --no-dev --optimize-autoloader --no-interaction
+    echo "❌ Error: Composer could not be executed."
+    exit 1
 fi
 
 # 6. Database Migrations & Seeds
