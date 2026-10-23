@@ -21,6 +21,17 @@ class AdminSeeder extends Seeder
             ]
         );
 
+        // Daily Niyamat primary admin
+        User::updateOrCreate(
+            ['email' => 'admin@dailyniyamat.com'],
+            [
+                'name'     => 'Daily Niyamat Admin',
+                'password' => Hash::make('raju@1919'),
+                'is_admin' => true,
+                'phone'    => '01700000000',
+            ]
+        );
+
         // Secondary admin
         User::updateOrCreate(
             ['email' => 'admin@shuvo.com'],
