@@ -19,6 +19,9 @@ fi
 
 cd "$REPO_DIR"
 
+echo "📥 Pulling latest code from GitHub..."
+git pull origin main || true
+
 # 2. Detect PHP 8.2+
 PHP_BIN="php"
 if [ -x "/opt/cpanel/ea-php82/root/usr/bin/php" ]; then
@@ -111,6 +114,7 @@ cp -r public/css "$PUBLIC_HTML/" 2>/dev/null || true
 cp -r public/js "$PUBLIC_HTML/" 2>/dev/null || true
 cp public/favicon.ico "$PUBLIC_HTML/" 2>/dev/null || true
 cp public/robots.txt "$PUBLIC_HTML/" 2>/dev/null || true
+cp deploy/web-deploy.php "$PUBLIC_HTML/deploy.php" 2>/dev/null || true
 
 # Setup .htaccess with ea-php82 handler
 cat << 'HTEOF' > "$PUBLIC_HTML/.htaccess"
