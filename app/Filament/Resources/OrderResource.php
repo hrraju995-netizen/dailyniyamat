@@ -523,6 +523,14 @@ class OrderResource extends Resource
                     ])
                     ->columns(3),
 
+                Infolists\Components\Section::make('Ordered Items')
+                    ->icon('heroicon-o-shopping-bag')
+                    ->schema([
+                        Infolists\Components\ViewEntry::make('items')
+                            ->hiddenLabel()
+                            ->view('filament.resources.order.order-items-table'),
+                    ]),
+
                 Infolists\Components\Section::make('Financials')
                     ->schema([
                         Infolists\Components\TextEntry::make('subtotal')

@@ -104,6 +104,14 @@
     .items-table td.right { text-align: right; }
     .items-table td.center { text-align: center; color: #6B7280; }
     .items-table tr:last-child td { border-bottom: none; }
+    .item-thumb {
+        width: 38px;
+        height: 38px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #E5E7EB;
+        vertical-align: middle;
+    }
     .item-name { font-weight: 700; color: #111827; }
     .item-weight { font-size: 11px; color: #6B7280; margin-top: 2px; }
 
@@ -236,17 +244,49 @@
 <table class="items-table">
     <thead>
         <tr>
-            <th style="width: 30px;">#</th>
-            <th>Item Description</th>
-            <th class="center" style="width: 60px;">Qty</th>
-            <th class="right" style="width: 100px;">Unit Price</th>
-            <th class="right" style="width: 100px;">Total</th>
+            <th style="width: 25px;">#</th>
+            <th style="width: 48px; text-align: center;">Item</th>
+            <th>Description</th>
+            <th class="center" style="width: 50px;">Qty</th>
+            <th class="right" style="width: 90px;">Unit Price</th>
+            <th class="right" style="width: 90px;">Total</th>
         </tr>
     </thead>
     <tbody>
         @foreach($order->items as $i => $item)
+            @php
+                $itemImgBase64 = null;
+                $imgPath = null;
+                if ($item->product && $item->product->image) {
+                    $imgPath = $item->product->image;
+                } elseif ($item->combo && $item->combo->image) {
+                    $imgPath = $item->combo->image;
+                }
+
+                if ($imgPath) {
+                    $cleanImg = ltrim(preg_replace('#^storage/#', '', $imgPath), '/');
+                    $fullImgPath = storage_path('app/public/' . $cleanImg);
+                    if (file_exists($fullImgPath)) {
+                        $ext  = strtolower(pathinfo($fullImgPath, PATHINFO_EXTENSION));
+                        $mime = match($ext) {
+                            'png'  => 'image/png',
+                            'webp' => 'image/webp',
+                            'gif'  => 'image/gif',
+                            default => 'image/jpeg',
+                        };
+                        $itemImgBase64 = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fullImgPath));
+                    }
+                }
+            @endphp
             <tr>
                 <td style="color:#9CA3AF;">{{ $i + 1 }}</td>
+                <td style="text-align: center; vertical-align: middle;">
+                    @if($itemImgBase64)
+                        <img src="{{ $itemImgBase64 }}" class="item-thumb" alt="">
+                    @else
+                        <div style="width: 38px; height: 38px; background: #F3F4F6; border-radius: 4px; display: inline-block; line-height: 38px; color: #9CA3AF; font-size: 10px; text-align: center;">N/A</div>
+                    @endif
+                </td>
                 <td>
                     <div class="item-name">{{ $item->name }}</div>
                     @if($item->weight)<div class="item-weight">Variant: {{ $item->weight }}</div>@endif

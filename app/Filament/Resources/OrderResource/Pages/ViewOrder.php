@@ -164,6 +164,20 @@ class ViewOrder extends ViewRecord
                     }
                 }),
 
+            Actions\Action::make('downloadInvoice')
+                ->label('Download Invoice (PDF)')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->color('success')
+                ->url(fn (Order $record): string => route('order.invoice', $record->number))
+                ->openUrlInNewTab(),
+
+            Actions\Action::make('packingSlip')
+                ->label('Packing Slip')
+                ->icon('heroicon-o-clipboard-document-list')
+                ->color('gray')
+                ->url(fn (Order $record): string => route('order.packing-slip', $record->number))
+                ->openUrlInNewTab(),
+
             Actions\EditAction::make(),
         ];
     }
